@@ -8,35 +8,43 @@ const { Server } = require("socket.io");
 const { createMediasoupWorker } = require('./sfu/sfuServer');
 const socketHandler = require('./socket/socketHandler');
 
-// const setupSocket = require("./socket/socketHandlers.js");
-const setupSocket = require("./socket/socketSetup.js");
-const groupsocket = require("./socket/groupSocket.js");
-
-createMediasoupWorker().then((worker) => {
-    // Initialize Socket.IO event handlers
-    io.on('connection', (socket) => {
-      console.log('New client connected:', socket.id);
-      socketHandler(socket, worker);
-    });
-  });
-
-
+// Load environment variables
 dotenv.config();
+
+// Connect to the database
 connectDB();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
 
+// Initialize Socket.IO before using it
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+});
+
+// Use CORS middleware
 app.use(cors());
 app.use(express.json());
 app.use("/user/v1", routing);
 
+// Make `io` globally accessible
 global.io = io;
-groupsocket(io)
 
+// Initialize group socket handlers
+const groupsocket = require("./socket/groupSocket.js");
+groupsocket(io);
 
+// Initialize Mediasoup worker & attach socket handlers
+createMediasoupWorker().then((worker) => {
+    io.on('connection', (socket) => {
+        console.log('New client connected:', socket.id);
+        socketHandler(socket, worker);
+    });
+});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-// module.exports = {io,server};
