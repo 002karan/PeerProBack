@@ -1,13 +1,10 @@
 const socketHandlers = require("./ChatRoom");
-
 module.exports = (io) => {
   io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
-
     // Handle events
     socketHandlers(io, socket);
 
-    // Disconnect handling
     socket.on("disconnect", () => {
       console.log("Client disconnected:", socket.id);
 

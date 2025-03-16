@@ -1,6 +1,7 @@
+const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const User = require("../models/User");
-
+const {io} = require("../backend_server")
 // Add user to the group's connected users without duplicates
 exports.addUserToGroup = async (groupId, userId) => {
   try {
@@ -44,6 +45,35 @@ exports.addUserToGroup = async (groupId, userId) => {
     console.log("User successfully added to the group");
   } catch (error) {
     console.error("Error adding user to group:", error);
+  }
+};
+exports.removeUserFromGroup = async (groupId, userId) => {
+  try {
+    console.log(`Removing user ${userId} from group ${groupId}`);
+
+    // Validate IDs
+    if (!mongoose.isValidObjectId(groupId) || !mongoose.isValidObjectId(userId)) {
+      console.log("Invalid ObjectId format.");
+      return;
+    }
+
+    // Remove user from `connectedUsers` array
+    await Group.findByIdAndUpdate(
+      groupId,
+      { $pull: { connectedUsers: { userId: new mongoose.Types.ObjectId(userId) } } },
+      { new: true }
+    );
+
+    // Update user's `groupId` to null
+    await User.findByIdAndUpdate(userId, { $unset: { groupId: "" } }, { new: true });
+
+    global.io.emit("userRemoved", { userId, groupId });
+
+
+    console.log(`User ${userId} successfully removed from group ${groupId}`);
+  } catch (error) {
+    console.error("Error removing user from group:", error);
+    throw error;
   }
 };
 
