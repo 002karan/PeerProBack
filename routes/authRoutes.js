@@ -8,6 +8,7 @@ const { connectUserToGroup } = require('../controllers/groupUserController');
 const { getConnectedUsers } = require('../controllers/groupController');
 const { verifyToken } = require('../middleware/authMiddleware.js');
 const { executeCodeController } = require('../controllers/codeExecution.js');
+const ChatGpt = require("../controllers/chatGpt.js")
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.get('/profile',getUserByToken)
 router.post('/group/connect', verifyToken, connectUserToGroup);
 router.get('/group/:groupId/users', verifyToken, getConnectedUsers);
 router.post("/coderunner", executeCodeController);
+router.post("/openAI", ChatGpt);
 
 module.exports = router;
 

@@ -2,7 +2,9 @@ const { Server } = require("socket.io");
 const { removeUserFromGroup } = require("../controllers/groupController");
 const User = require("../models/User");
 
+
 function setupGroupSocket(io) {
+ 
   const userMap = new Map(); // Map to store socket ID -> user ID
 
   io.on("connection", (socket) => {

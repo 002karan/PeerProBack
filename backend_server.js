@@ -7,6 +7,10 @@ const routing = require("./routes/authRoutes.js");
 const { Server } = require("socket.io");
 const { createMediasoupWorker } = require('./sfu/sfuServer');
 const socketHandler = require('./socket/socketHandler');
+const WebSocket = require("ws");
+const Y = require("yjs");
+const { WebsocketProvider } = require("y-websocket");
+
 
 // Load environment variables
 dotenv.config();
@@ -17,13 +21,15 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
+
 // Initialize Socket.IO before using it
 const io = new Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
         credentials: true
-    }
+    },
+
 });
 
 // Use CORS middleware
@@ -36,7 +42,15 @@ global.io = io;
 
 // Initialize group socket handlers
 const groupsocket = require("./socket/groupSocket.js");
+const codeHandler = require("./socket/collabCodeHandler.js");
+const drawingHandler = require("./socket/DrawingHandler.js");
+const lockGroup = require("./socket/LockGrpSocket.js");
+const screenShare = require("./socket/ScreenShareSocket.js");
 groupsocket(io);
+codeHandler(io);
+drawingHandler(io);
+lockGroup(io);
+screenShare(io);
 
 // Initialize Mediasoup worker & attach socket handlers
 createMediasoupWorker().then((worker) => {
