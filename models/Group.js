@@ -10,6 +10,11 @@ const GroupSchema = new mongoose.Schema({
     required: true,
 
   },
+  NumberOfMembers: {
+    type: Number,
+    required: true,
+    min: 1, // Ensures the number of members is at least 1
+  },
   connectedUsers: [
     {
       userId: {
