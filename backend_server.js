@@ -10,6 +10,12 @@ const socketHandler = require('./socket/socketHandler');
 const WebSocket = require("ws");
 const Y = require("yjs");
 const { WebsocketProvider } = require("y-websocket");
+const groupsocket = require("./socket/groupSocket.js");
+const codeHandler = require("./socket/collabCodeHandler.js");
+const drawingHandler = require("./socket/DrawingHandler.js");
+// const lockGroup = require("./socket/LockGrpSocket.js");
+const screenShare = require("./socket/ScreenShareSocket.js");
+const codeSharing = require("./socket/codeSharingSocket.js");
 
 
 // Load environment variables
@@ -41,16 +47,13 @@ app.use("/user/v1", routing);
 global.io = io;
 
 // Initialize group socket handlers
-const groupsocket = require("./socket/groupSocket.js");
-const codeHandler = require("./socket/collabCodeHandler.js");
-const drawingHandler = require("./socket/DrawingHandler.js");
-const lockGroup = require("./socket/LockGrpSocket.js");
-const screenShare = require("./socket/ScreenShareSocket.js");
+
 groupsocket(io);
 codeHandler(io);
 drawingHandler(io);
-lockGroup(io);
 screenShare(io);
+codeSharing(io);
+// lockGroup(io);
 
 // Initialize Mediasoup worker & attach socket handlers
 createMediasoupWorker().then((worker) => {
