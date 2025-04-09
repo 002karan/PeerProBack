@@ -29,14 +29,29 @@ const server = http.createServer(app);
 
 
 // Initialize Socket.IO before using it
+// const io = new Server(server, {
+//     cors: {
+//         origin: ["http://localhost:5173", "https://peer-pro-fro-824y.vercel.app/"],
+//         methods: ["GET", "POST"],
+//         credentials: true
+//     },
+
+// });
+
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:5173", "https://peer-pro-fro-824y.vercel.app/"],
-        methods: ["GET", "POST"],
-        credentials: true
+      origin:  ["http://localhost:5173", "https://peer-pro-fro-824y.vercel.app/"], // allow any origin - in production, use specific URL(s)
+      methods: ["GET", "POST"],
+      credentials: true
     },
+    transports: [
+      "websocket",
+      "polling"
+    ]
+  });
 
-});
+
+
 
 // Use CORS middleware
 app.use(cors());
