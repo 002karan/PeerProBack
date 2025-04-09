@@ -31,7 +31,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO before using it
 const io = new Server(server, {
     cors: {
-        origin: "*,https://peer-pro-fro.vercel.app/",
+        origin: "*",
         methods: ["GET", "POST"],
         credentials: true
     },
