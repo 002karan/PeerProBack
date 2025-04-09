@@ -6,7 +6,6 @@ const {io} = require("../backend_server")
 exports.addUserToGroup = async (groupId, userId) => {
   try {
     const user = await User.findById(userId).select("name");
-    console.log("groupId userId",{groupId, userId})
 
     if (!user) {
       throw new Error("User not found");
@@ -151,7 +150,8 @@ exports.removeUserFromGroup = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-// Fetch connected users from a group
+
+
 exports.getConnectedUsers = async (req, res) => {
   try {
     const { groupId } = req.params;
